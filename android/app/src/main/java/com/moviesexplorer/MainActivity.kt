@@ -1,4 +1,4 @@
-package com.moviesexplorer
+package com.moviesExplorer
 
 import android.os.Bundle;
 
