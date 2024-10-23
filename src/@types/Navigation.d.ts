@@ -6,27 +6,6 @@ import {
 } from '@react-navigation/drawer';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
-// declare global {
-//   type DrawerParamList = {
-//     BottomTabs: undefined;
-//     Profile: undefined;
-//   };
-//
-//   type ProfileScreenParams = DrawerNavigationProp<DrawerParamList, typeof ROUTES.Drawer.Profile>;
-//
-//   type BottomTabsParamList = {
-//     MoviesStackParamList: undefined;
-//     Favourites: undefined;
-//   };
-//
-//   type MoviesStackParamList = {
-//     MoviesList: undefined;
-//     MoviesInfo: {
-//       movieId: string;
-//     };
-//   };
-// }
-
 declare global {
   type DrawerScreenNames = keyof typeof ROUTES.Drawer;
   type DrawerParamList = Record<DrawerScreenNames, undefined>;
