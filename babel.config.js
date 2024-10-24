@@ -15,7 +15,7 @@ module.exports = {
           '@navigation': './src/navigation',
           '@network': './src/network',
           '@storage': './src/storage',
-          '@styles': './src/styles',
+          '@theme': './src/theme',
         },
       },
     ],

@@ -2,7 +2,7 @@ import colors from '@constants/colors';
 import { StyleSheet } from 'react-native';
 
 const globalStyles = StyleSheet.create({
-  flex: {
+  container: {
     flex: 1,
   },
 
@@ -10,7 +10,7 @@ const globalStyles = StyleSheet.create({
     backgroundColor: colors.white,
   },
 
-  flexContainer: {
+  justifiedContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
@@ -25,7 +25,9 @@ const globalStyles = StyleSheet.create({
     backgroundColor: colors.fourth,
   },
 
-  loading: {},
+  colorBlack: {
+    color: colors.black,
+  },
 });
 
 export default globalStyles;

@@ -2,15 +2,15 @@ import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
 import {SafeAreaView} from 'react-native';
 
-import DrawerNavigator from '@navigation/Drawer';
+import MyDrawerNavigator from '@navigation/Drawer';
 
-import globalStyles from '@styles/globalStyles';
+import globalStyles from '@theme/globalStyles';
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView style={globalStyles.flex}>
+    <SafeAreaView style={globalStyles.container}>
       <NavigationContainer>
-        <DrawerNavigator />
+        <MyDrawerNavigator />
       </NavigationContainer>
     </SafeAreaView>
   );
