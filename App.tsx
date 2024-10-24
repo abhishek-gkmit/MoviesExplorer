@@ -1,8 +1,19 @@
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import { Text } from 'react-native';
+import {SafeAreaView} from 'react-native';
+
+import MyDrawerNavigator from '@navigation/Drawer';
+
+import globalStyles from '@theme/globalStyles';
 
 function App(): React.JSX.Element {
-  return <Text>App</Text>;
+  return (
+    <SafeAreaView style={globalStyles.container}>
+      <NavigationContainer>
+        <MyDrawerNavigator />
+      </NavigationContainer>
+    </SafeAreaView>
+  );
 }
 
 export default App;
