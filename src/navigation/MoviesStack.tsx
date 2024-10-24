@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator<MoviesStackParamList>();
 
 function MoviesStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name={ROUTES.MoviesStack.MoviesList}
         component={MoviesList}

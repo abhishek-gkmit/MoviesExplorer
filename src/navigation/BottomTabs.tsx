@@ -8,7 +8,7 @@ const BottomTabs = createBottomTabNavigator<BottomTabsParamList>();
 
 function BottomTabsNavigator() {
   return (
-    <BottomTabs.Navigator>
+    <BottomTabs.Navigator screenOptions={{ headerShown: false }}>
       <BottomTabs.Screen
         name={ROUTES.BottomTabs.MoviesStack}
         component={MoviesStack}

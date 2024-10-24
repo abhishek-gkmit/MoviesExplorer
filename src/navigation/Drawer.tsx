@@ -1,10 +1,10 @@
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import BottomTabs from '@navigation/BottomTabs';
 import Profile from '@screens/profile';
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
-function DrawerNavigator() {
+function MyDrawerNavigator() {
   return (
     <Drawer.Navigator>
       <Drawer.Screen name="Home" component={BottomTabs} />
@@ -13,4 +13,4 @@ function DrawerNavigator() {
   );
 }
 
-export default DrawerNavigator;
+export default MyDrawerNavigator;
