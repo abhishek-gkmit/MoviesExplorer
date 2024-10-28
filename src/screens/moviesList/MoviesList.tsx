@@ -1,109 +1,53 @@
-import {
-  Text,
-  View,
-  FlatList,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useCallback, useEffect, useState, memo } from 'react';
 
-import API from '@network/axiosInstance';
-import { formatMovies, trimText } from '@utility/dataFormatters';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import Input from '@components/input';
+import MovieCardLong from '@components/movieCardLong';
+import { getPopularMovies, searchMovies } from '@network/apiFunctions';
+import colors from '@constants/colors';
 
 import styles from '@screens/moviesList/styles';
-import globalStyles from '@theme/globalStyles';
-import TextWithIcon from '@components/textWithIcon';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import ROUTES from '@constants/routes';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const sample_data = [
-  {
-    id: '1000',
-    name: 'Interstellar',
-    releaseDate: '12-11-2014',
-    thumbnailUrl:
-      'https://m.media-amazon.com/images/M/MV5BNzc2MWUyYzctY2E4Ny00ZTlmLThjNTMtMTViZGI5NjcyN2EzXkEyXkFqcGc@._V1_.jpg',
-    plot: 'Some random movie plot',
-    genere: 'Sci-Fi',
-  },
-];
-
-function Movie({ movie }: MovieProps) {
-  const navigation =
-    useNavigation<
-      NativeStackNavigationProp<
-        MoviesStackParamList,
-        typeof ROUTES.MoviesStack.MovieInfo
-      >
-    >();
-
-  return (
-    <TouchableOpacity
-      style={styles.movieContainer}
-      activeOpacity={0.8}
-      onPress={() =>
-        navigation.navigate(ROUTES.MoviesStack.MovieInfo, {
-          movieId: movie.id + '',
-        })
-      }>
-      <Image
-        source={{ uri: movie.posterUrl }}
-        style={styles.posterImage}
-        resizeMode="cover"
-      />
-      <View style={styles.movieDetailsContainer}>
-        <View>
-          <Text style={[globalStyles.colorBlack, styles.movieName]}>
-            {movie.title}
-          </Text>
-
-          <Text style={[styles.moviePlot, globalStyles.colorBlack]}>
-            {trimText(movie.plot, 200) + '...'}
-          </Text>
-        </View>
-
-        <View style={styles.movieSubDetailsContainer}>
-          <TextWithIcon
-            icon={{ name: 'star', size: 16 }}
-            text={movie.rating.toPrecision(2)}
-            textStyle={styles.movieRating}
-          />
-
-          <TextWithIcon
-            icon={{ name: 'calendar', size: 16 }}
-            text={movie.releaseDate}
-            textStyle={styles.movieReleaseDate}
-          />
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
-function MovieListFooter({ animating }: MovieListFooterProps) {
-  return (
-    <View>
-      <ActivityIndicator animating={animating} />
-    </View>
-  );
-}
-
-function MoviesList({ navigation }: MoviesListScreenProps) {
+function MoviesList() {
   const [movies, setMovies] = useState<FormattedMovieData[]>([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
+  const [searchedMovies, setSearchedMovies] = useState<FormattedMovieData[]>(
+    [],
+  );
+  const [searchPage, setSearchPage] = useState(1);
+  const [searchText, setSearchText] = useState('');
+
+  const navigation = useNavigation();
+
   const loadMovies = useCallback(
     async function loadMovies(page: number) {
       setLoading(true);
-      const data = await API.get('movie/popular', { params: { page: page } });
-      const formattedData = formatMovies(data);
-      setMovies([...movies, ...formattedData]);
+      const formattedMovies = await getPopularMovies(page);
+      setMovies([...movies, ...formattedMovies]);
       setLoading(false);
     },
-    [movies, setMovies],
+    [movies, setMovies, setLoading],
+  );
+
+  const getSearchedMovies = useCallback(
+    async function (page: number, shouldAppend: boolean = false) {
+      setLoading(true);
+      const newSearchedMovies = await searchMovies(searchText, page);
+
+      if (shouldAppend) {
+        setSearchedMovies([...searchedMovies, ...newSearchedMovies]);
+      } else {
+        setSearchedMovies(newSearchedMovies);
+      }
+
+      setLoading(false);
+    },
+    [searchedMovies, setSearchedMovies, setLoading, searchText],
   );
 
   useEffect(() => {
@@ -111,22 +55,50 @@ function MoviesList({ navigation }: MoviesListScreenProps) {
   }, [page]);
 
   useEffect(() => {
-    loadMovies(1);
-  }, []);
+    setLoading(true);
+    const timeoutId = setTimeout(() => getSearchedMovies(1), 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchText]);
+
+  useEffect(() => {
+    getSearchedMovies(searchPage, true);
+  }, [searchPage]);
+
+  useFocusEffect(
+    useCallback(() => {
+      navigation.getParent()?.getParent()?.setOptions({ headerTitle: 'Movies' });
+    }, []),
+  );
 
   return (
     <View style={styles.movieListContainer}>
+      <Input
+        value={searchText}
+        setValue={value => setSearchText(value)}
+        placeholder="Search for movies"
+        icon={<MaterialIcons name="search" color={colors.gray} size={18} />}
+      />
+
       <FlatList
         keyExtractor={(item, index) => item.id + '' + index}
-        data={movies}
-        renderItem={({ item }) => <Movie movie={item} />}
-        ListFooterComponent={<MovieListFooter animating={loading} />}
-        style={styles.movieList}
+        data={searchText === '' ? movies : searchedMovies}
+        renderItem={({ item }) => <MovieCardLong movie={item} />}
+        ListFooterComponent={<ActivityIndicator animating={loading} />}
         contentContainerStyle={styles.movieListContent}
-        onEndReached={() => setPage(page => page + 1)}
+        onEndReached={
+          searchText === ''
+            ? () => setPage(page => page + 1)
+            : () => setSearchPage(searchPage => searchPage + 1)
+        }
+        ListHeaderComponent={
+          <Text style={styles.listHeader}>
+            {searchText === '' ? 'Popular Movies' : 'Search Results'}
+          </Text>
+        }
       />
     </View>
   );
 }
 
-export default MoviesList;
+export default memo(MoviesList);
