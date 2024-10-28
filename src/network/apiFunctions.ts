@@ -4,15 +4,16 @@ import {
   formatMovieInfo,
   formatMovies,
 } from '@utility/dataFormatters';
+import API_URLS from '@constants/apiUrls';
 
 async function getPopularMovies(page: number) {
-  const data = await axiosInstance.get('discover/movie', { params: { page } });
+  const data = await axiosInstance.get(API_URLS.discover, { params: { page } });
 
   return formatMovies(data);
 }
 
 async function searchMovies(query: string, page: number) {
-  const data = await axiosInstance.get('search/movie', {
+  const data = await axiosInstance.get(API_URLS.search, {
     params: { query, page: page + '' },
   });
 
@@ -20,10 +21,9 @@ async function searchMovies(query: string, page: number) {
 }
 
 async function getFavoriteMovies(page: number) {
-  const data = await axiosInstance.get(
-    `account/${process.env.ACCOUNT_ID}/favorite/movies`,
-    { params: { page } },
-  );
+  const data = await axiosInstance.get(API_URLS.favouriteMovies, {
+    params: { page },
+  });
 
   return formatMovies(data);
 }
@@ -33,45 +33,52 @@ async function getSimiliarMovies(movieId: string, page: number) {
     return [];
   }
 
-  console.log(`movie/${movieId}/similar`);
-  const data = await axiosInstance.get(`movie/${movieId}/similar`, {
-    params: { page },
-  });
+  const data = await axiosInstance.get(
+    API_URLS.similarMovies.replace('MOVIE_ID', movieId),
+    { params: { page } },
+  );
 
   return formatMovies(data);
 }
 
 async function getMovieInfo(movieId: string) {
-  const data = (await axiosInstance.get(`movie/${movieId}`)) as RawMovieInfo;
+  const data = (await axiosInstance.get(
+    API_URLS.movieInfo.replace('MOVIE_ID', movieId),
+  )) as RawMovieInfo;
 
   return formatMovieInfo(data);
 }
 
 async function getMovieImages(movieId: string) {
-  const images = (await axiosInstance.get(`movie/${movieId}/images`)) as any;
+  const images = (await axiosInstance.get(
+    API_URLS.movieImages.replace('MOVIE_ID', movieId),
+  )) as any;
 
   return formatMovieImages(images?.backdrops);
 }
 
 async function addToFavourites(movieId: string) {
-  await axiosInstance.post(
-    `account/${process.env.ACCOUNT_ID}/favorite`,
-    { media_id: +movieId, media_type: 'movie', favorite: true },
-  );
+  await axiosInstance.post(API_URLS.favorite, {
+    media_id: +movieId,
+    media_type: 'movie',
+    favorite: true,
+  });
 }
 
 async function removeFromFavourites(movieId: string) {
-  await axiosInstance.post(
-    `account/${process.env.ACCOUNT_ID}/favorite`,
-    { media_id: +movieId, media_type: 'movie', favorite: false },
-  );
+  await axiosInstance.post(API_URLS.favorite, {
+    media_id: +movieId,
+    media_type: 'movie',
+    favorite: false,
+  });
 }
 
 async function addToWatchlist(movieId: string) {
-  const res = await axiosInstance.post(
-    `account/${process.env.ACCOUNT_ID}/watchlist`,
-    { media_id: +movieId, media_type: 'movie', watchlist: true },
-  );
+  const res = await axiosInstance.post(API_URLS.watchlist, {
+    media_id: +movieId,
+    media_type: 'movie',
+    watchlist: true,
+  });
 
   if (!res.data?.success) {
     console.error(`Failed to add movie: ${movieId} into watchlist`);
@@ -79,10 +86,11 @@ async function addToWatchlist(movieId: string) {
 }
 
 async function removeFromWatchlist(movieId: string) {
-  const res = await axiosInstance.post(
-    `account/${process.env.ACCOUNT_ID}/watchlist`,
-    { media_id: +movieId, media_type: 'movie', watchlist: false },
-  );
+  const res = await axiosInstance.post(API_URLS.watchlist, {
+    media_id: +movieId,
+    media_type: 'movie',
+    watchlist: false,
+  });
 
   if (!res.data?.success) {
     console.error(`Failed to remove movie: ${movieId} from watchlist`);
