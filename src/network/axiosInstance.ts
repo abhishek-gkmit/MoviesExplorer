@@ -1,7 +1,10 @@
 import axios from 'axios';
+import ApiConstants from '@constants/ApiConstants';
+
+const { API_BASE_URL, API_VERSION } = ApiConstants;
 
 const axiosInstance = axios.create({
-  baseURL: `${process.env.API_BASE_URL}/${process.env.API_VERSION}/`,
+  baseURL: `${ApiConstants.API_BASE_URL}/${API_VERSION}/`,
   headers: {
     Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
     Accept: 'application/json',
