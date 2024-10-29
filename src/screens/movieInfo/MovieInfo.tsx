@@ -6,14 +6,7 @@ import {
   memo,
   useMemo,
 } from 'react';
-import {
-  Text,
-  View,
-  Image,
-  ScrollView,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import { Text, View, Image, ScrollView, FlatList } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
@@ -36,7 +29,7 @@ import {
   removeFromWatchlist,
 } from '@network/apiFunctions';
 
-import styles from '@screens/movieInfo/styles';
+import styles from './styles';
 
 function MovieStats({ rating, ratingCount, runtime }: MovieStatsProps) {
   return (
@@ -177,8 +170,8 @@ function MovieInfo() {
   const _onWatchlistBtnPress = useMemo(() => {
     return () =>
       inWatchlist
-        ? removeFromFavouritesWrapper(movieInfo.id + '')
-        : addToFavouritesWrapper(movieInfo.id + '');
+        ? removeFromWatchlistWrapper(movieInfo.id + '')
+        : addToWatchlistWrapper(movieInfo.id + '');
   }, [inWatchlist]);
 
   const _listRenderItem = useCallback(

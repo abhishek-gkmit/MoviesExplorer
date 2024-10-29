@@ -5,7 +5,6 @@ import type {
   TextStyle,
   TouchableOpacityProps,
   ViewStyle,
-  View,
 } from 'react-native/types';
 
 declare global {
@@ -88,7 +87,7 @@ declare global {
 
   interface CustomLoaderProps {
     animating: boolean;
-    isSmall?: boolean;
+    size?: 'large' | 'small';
     color?: string;
   }
 }

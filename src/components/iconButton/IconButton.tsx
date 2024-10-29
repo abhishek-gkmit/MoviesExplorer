@@ -1,12 +1,12 @@
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import styles from '@components/iconButton/styles';
+import styles from './styles';
 
 function IconButton({ icon, btnStyle, ...props }: IconButtonComponentProps) {
   return (
     <TouchableOpacity
-      style={StyleSheet.compose(styles.iconButton, btnStyle)}
+      style={[styles.iconButton, btnStyle]}
       activeOpacity={0.8}
       {...props}>
       <MaterialCommunityIcon {...icon} />
