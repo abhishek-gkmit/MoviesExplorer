@@ -1,4 +1,4 @@
-import { ReactNode, RefObject } from 'react';
+import { ReactNode } from 'react';
 import type {
   StyleProp,
   TextInputProps,
@@ -84,5 +84,11 @@ declare global {
 
   interface ImageCarouselProps {
     images: string[];
+  }
+
+  interface CustomLoaderProps {
+    animating: boolean;
+    isSmall?: boolean;
+    color?: string;
   }
 }

@@ -1,4 +1,11 @@
-import { useEffect, useState, useCallback, useContext, memo } from 'react';
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  memo,
+  useMemo,
+} from 'react';
 import {
   Text,
   View,
@@ -7,21 +14,17 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {
-  RouteProp,
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import uuid from 'react-native-uuid';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import ROUTES from '@constants/routes';
 
 import TextWithIcon from '@components/textWithIcon';
 import MovieCard from '@components/movieCard';
+import IconButton from '@components/iconButton';
+import Loader from '@components/customLoader';
+
 import { ThemeAndStorageContext } from '@contexts/ThemeAndStorageContext';
+import ROUTES from '@constants/routes';
 import colors from '@constants/colors';
 import {
   addToFavourites,
@@ -34,22 +37,48 @@ import {
 } from '@network/apiFunctions';
 
 import styles from '@screens/movieInfo/styles';
-import { ImageLoadingIndicator } from '@assets/images';
 
-const defaultData: FormattedMovieInfo = {
-  title: 'Example',
-  backdropUrl: ImageLoadingIndicator,
-  genres: [],
-  id: 1000,
-  plot: 'Plot',
-  posterUrl: ImageLoadingIndicator,
-  releaseDate: '',
-  runtime: 0,
-  status: '',
-  rating: 0,
-  ratingCount: 0,
-  revenue: 0,
-};
+function MovieStats({ rating, ratingCount, runtime }: MovieStatsProps) {
+  return (
+    <View style={styles.movieStats}>
+      <View style={styles.movieStatContainer}>
+        <Text style={styles.movieStatText}>{rating?.toPrecision(2)}</Text>
+        <Text style={styles.movieStatHeading}>Rating</Text>
+      </View>
+
+      <View style={styles.movieStatContainer}>
+        <Text style={styles.movieStatText}>{ratingCount}</Text>
+        <Text style={styles.movieStatHeading}>Rate Count</Text>
+      </View>
+
+      <View style={styles.movieStatContainer}>
+        <Text style={styles.movieStatText}>
+          {(runtime / 60).toPrecision(2) + 'h'}
+        </Text>
+        <Text style={styles.movieStatHeading}>Runtime</Text>
+      </View>
+    </View>
+  );
+}
+
+function MovieImages({ images }: MovieImagesProps) {
+  return (
+    <View>
+      <Text style={styles.insightsHeading}>Insights</Text>
+      <ScrollView contentContainerStyle={styles.imagesContainer} horizontal>
+        {images.map(imageUrl => {
+          return (
+            <Image
+              key={uuid.v4().toString()}
+              source={{ uri: imageUrl }}
+              style={styles.movieExtraImage}
+            />
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+}
 
 function MovieInfo() {
   const { params } =
@@ -65,33 +94,50 @@ function MovieInfo() {
       >
     >();
 
+  // states
   const [movieInfo, setMovieInfo] = useState<FormattedMovieInfo>({} as any);
   const [movieImages, setMovieImages] = useState<string[]>([]);
   const [similarMovies, setSimilarMovies] = useState<FormattedMovieData[]>([]);
-
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const [isFavourite, setIsFavourite] = useState(false);
-  const [inWatchlist, setInWatchlist] = useState(false);
-
+  // context states
   const { favouriteMovies, setFavouriteMovies, watchlist, setWatchlist } =
     useContext(ThemeAndStorageContext);
 
+  // memoized values
+  const isFavourite = useMemo(() => {
+    const isFavourite = favouriteMovies.some(
+      movieId => movieId === movieInfo.id + '',
+    );
+
+    return isFavourite;
+  }, [favouriteMovies]);
+
+  const inWatchlist = useMemo(() => {
+    const inWatchlist = watchlist.some(
+      movieId => movieId === movieInfo.id + '',
+    );
+
+    return inWatchlist;
+  }, [watchlist]);
+
+  // api handles
   const loadSimilarMovies = useCallback(
     async function loadSimilarMovies(page: number) {
-      console.log('loadSimilarMovies>>>>>>>>');
       const newSimilarMovies = await getSimiliarMovies(movieInfo.id + '', page);
       setSimilarMovies([...similarMovies, ...newSimilarMovies]);
     },
-    [similarMovies, setSimilarMovies],
+    [similarMovies],
   );
 
+  // onPress handlers
   const addToFavouritesWrapper = useCallback(
     (movieId: string) => {
       addToFavourites(movieId);
       setFavouriteMovies([...favouriteMovies, movieId]);
     },
-    [favouriteMovies, setFavouriteMovies],
+    [favouriteMovies],
   );
 
   const removeFromFavouritesWrapper = useCallback(
@@ -100,7 +146,7 @@ function MovieInfo() {
 
       removeFromFavourites(movieId);
     },
-    [favouriteMovies, setFavouriteMovies],
+    [favouriteMovies],
   );
 
   const addToWatchlistWrapper = useCallback(
@@ -109,7 +155,7 @@ function MovieInfo() {
 
       setWatchlist([...watchlist, movieId]);
     },
-    [watchlist, setWatchlist],
+    [watchlist],
   );
 
   const removeFromWatchlistWrapper = useCallback(
@@ -118,16 +164,46 @@ function MovieInfo() {
 
       removeFromWatchlist(movieId);
     },
-    [watchlist, setWatchlist],
+    [watchlist],
   );
 
+  const _onFavouriteBtnPress = useMemo(() => {
+    return () =>
+      isFavourite
+        ? removeFromFavouritesWrapper(movieInfo.id + '')
+        : addToFavouritesWrapper(movieInfo.id + '');
+  }, [isFavourite]);
+
+  const _onWatchlistBtnPress = useMemo(() => {
+    return () =>
+      inWatchlist
+        ? removeFromFavouritesWrapper(movieInfo.id + '')
+        : addToFavouritesWrapper(movieInfo.id + '');
+  }, [inWatchlist]);
+
+  const _listRenderItem = useCallback(
+    ({ item }) => (
+      <MovieCard
+        movie={item}
+        onPress={() =>
+          navigation.push(ROUTES.MoviesStack.MovieInfo, {
+            movieId: item.id + '',
+          })
+        }
+      />
+    ),
+    [navigation],
+  );
+
+  // useEffects
   useEffect(() => {
     loadSimilarMovies(page);
   }, [page]);
 
   useEffect(() => {
-    console.log('inital loading>>>>>>>>>');
     (async () => {
+      setLoading(true);
+
       const movieInfo = await getMovieInfo(params.movieId);
       setMovieInfo(movieInfo);
 
@@ -136,21 +212,14 @@ function MovieInfo() {
 
       const similarMovies = await getSimiliarMovies(params.movieId, 1);
       setSimilarMovies(similarMovies);
+
+      setLoading(false);
     })();
   }, []);
 
-  useEffect(() => {
-    const isFavourite = favouriteMovies.some(
-      movieId => movieId === movieInfo.id + '',
-    );
-
-    const inWatchlist = watchlist.some(
-      movieId => movieId === movieInfo.id + '',
-    );
-
-    setInWatchlist(inWatchlist);
-    setIsFavourite(isFavourite);
-  }, [favouriteMovies, watchlist, setInWatchlist, setIsFavourite, movieInfo]);
+  if (loading) {
+    return <Loader animating={true} />;
+  }
 
   return (
     <ScrollView style={styles.movieInfoContainer}>
@@ -162,35 +231,27 @@ function MovieInfo() {
         />
       </View>
 
-      <TouchableOpacity
+      <IconButton
         activeOpacity={0.5}
-        style={styles.favouriteBtn}
-        onPress={() =>
-          isFavourite
-            ? removeFromFavouritesWrapper(movieInfo.id + '')
-            : addToFavouritesWrapper(movieInfo.id + '')
-        }>
-        <MaterialCommunityIcons
-          name={isFavourite ? 'heart' : 'heart-outline'}
-          color={colors.primary}
-          size={30}
-        />
-      </TouchableOpacity>
+        btnStyle={styles.favouriteBtn}
+        icon={{
+          name: isFavourite ? 'heart' : 'heart-outline',
+          color: colors.primary,
+          size: 30,
+        }}
+        onPress={_onFavouriteBtnPress}
+      />
 
-      <TouchableOpacity
+      <IconButton
         activeOpacity={0.5}
-        style={styles.watchlistBtn}
-        onPress={() =>
-          inWatchlist
-            ? removeFromWatchlistWrapper(movieInfo.id + '')
-            : addToWatchlistWrapper(movieInfo.id + '')
-        }>
-        <MaterialCommunityIcons
-          name={inWatchlist ? 'bookmark' : 'bookmark-outline'}
-          color={colors.primary}
-          size={30}
-        />
-      </TouchableOpacity>
+        btnStyle={styles.watchlistBtn}
+        icon={{
+          name: inWatchlist ? 'bookmark' : 'bookmark-outline',
+          color: colors.primary,
+          size: 30,
+        }}
+        onPress={_onWatchlistBtnPress}
+      />
 
       <View style={styles.movieInfoSubContainer}>
         <View style={styles.posterContaienr}>
@@ -211,57 +272,20 @@ function MovieInfo() {
 
         <Text style={styles.plot}>{movieInfo.plot}</Text>
 
-        <View style={styles.movieStats}>
-          <View style={styles.movieStatContainer}>
-            <Text style={styles.movieStatText}>
-              {movieInfo?.rating?.toPrecision(2)}
-            </Text>
-            <Text style={styles.movieStatHeading}>Rating</Text>
-          </View>
+        <MovieStats
+          rating={movieInfo.rating}
+          ratingCount={movieInfo?.ratingCount}
+          runtime={movieInfo?.runtime}
+        />
 
-          <View style={styles.movieStatContainer}>
-            <Text style={styles.movieStatText}>{movieInfo?.ratingCount}</Text>
-            <Text style={styles.movieStatHeading}>Rate Count</Text>
-          </View>
-
-          <View style={styles.movieStatContainer}>
-            <Text style={styles.movieStatText}>
-              {(movieInfo?.runtime / 60).toPrecision(2) + 'h'}
-            </Text>
-            <Text style={styles.movieStatHeading}>Runtime</Text>
-          </View>
-        </View>
-
-        <View>
-          <Text style={styles.insightsHeading}>Insights</Text>
-          <ScrollView contentContainerStyle={styles.imagesContainer} horizontal>
-            {movieImages.map(imageUrl => {
-              return (
-                <Image
-                  key={uuid.v4().toString()}
-                  source={{ uri: imageUrl }}
-                  style={styles.movieExtraImage}
-                />
-              );
-            })}
-          </ScrollView>
-        </View>
+        <MovieImages images={movieImages} />
 
         <View style={styles.similarMoviesContainer}>
           <Text style={styles.similarMoviesHeading}>Similar Movies</Text>
           <FlatList
             data={similarMovies}
             keyExtractor={(item, index) => item.id + '' + index}
-            renderItem={({ item }) => (
-              <MovieCard
-                movie={item}
-                onPress={() =>
-                  navigation.push(ROUTES.MoviesStack.MovieInfo, {
-                    movieId: item.id + '',
-                  })
-                }
-              />
-            )}
+            renderItem={_listRenderItem}
             indicatorStyle="black"
             initialNumToRender={8}
             horizontal={true}

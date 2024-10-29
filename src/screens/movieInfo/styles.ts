@@ -42,15 +42,15 @@ const styles = StyleSheet.create({
   },
 
   movieName: {
-    fontFamily: 'NunitoSans-Regular',
-    fontSize: 20,
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.twenty,
     color: colors.primary,
     textAlign: 'center',
   },
 
   movieReleaseDate: {
-    fontFamily: 'NunitoSans-Regular',
-    fontSize: 14,
+    fontFamily: fontFamily.regular,
+    fontSize: fontSize.fourteen,
     color: colors.primary,
     textAlign: 'center',
   },
@@ -91,16 +91,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  plot: {
-    textAlign: 'center',
-    color: colors.gray,
-    fontSize: 14,
-  },
-
   insightsHeading: {
     color: colors.black,
-    fontSize: 18,
-    marginBottom: 10,
+    fontSize: fontSize.eighteen,
+    marginBottom: 5,
   },
 
   similarListContentStyle: {
@@ -110,38 +104,18 @@ const styles = StyleSheet.create({
   similarMoviesContainer: {
     gap: 10,
     borderTopWidth: 1,
-    borderTopColor: colors.black1,
+    borderTopColor: colors.black2,
     paddingTop: 5,
   },
 
   similarMoviesHeading: {
     color: colors.black,
-    fontSize: 18,
+    fontSize: fontSize.eighteen,
   },
 
   activityIndicatorContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-
-  favouriteBtn: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-    backgroundColor: colors.black5,
-    padding: 5,
-    borderRadius: 10,
-    zIndex: 10,
-  },
-
-  watchlistBtn: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: colors.black5,
-    padding: 5,
-    borderRadius: 10,
-    zIndex: 10,
   },
 });
 

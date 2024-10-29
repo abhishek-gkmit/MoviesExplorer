@@ -1,7 +1,7 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { memo } from 'react';
+import { StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 
 import styles from '@components/movieCard/style';
-import { memo } from 'react';
 
 function MovieCard({
   movie,
@@ -12,16 +12,19 @@ function MovieCard({
 }: MovieCardProps) {
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={StyleSheet.compose(styles.container, containerStyle)}
       onPress={onPress}>
       <Image
         source={{ uri: movie.posterUrl }}
-        style={styles.imageStyle}
+        style={StyleSheet.compose(styles.imageStyle, imageStyle)}
         resizeMode="cover"
       />
-        <Text numberOfLines={1} ellipsizeMode='tail' style={StyleSheet.compose(styles.headingStyle, headingStyle)}>
-          {movie.title}
-        </Text>
+      <Text
+        numberOfLines={1}
+        ellipsizeMode="tail"
+        style={StyleSheet.compose(styles.headingStyle, headingStyle)}>
+        {movie.title}
+      </Text>
     </TouchableOpacity>
   );
 }
