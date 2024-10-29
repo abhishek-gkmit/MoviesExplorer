@@ -1,10 +1,7 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { useState, createContext } from 'react';
+import React, { useState, createContext, useEffect } from 'react';
 
-import storage from '@utility/asyncStorage';
-import API from '@network/axiosInstance';
-import { formatMovies, getMoviesId } from '@utility/dataFormatters';
+import { getFavoriteMovies, getWatchlistMovies } from '@network/apiFunctions';
+import { getMoviesId } from '@utility/dataFormatters';
 
 const ThemeAndStorageContext = createContext<ThemeAndStorageContextValues>(
   {} as ThemeAndStorageContextValues,
@@ -20,8 +17,8 @@ function ThemeAndStorageContextProvider({
 
   useEffect(() => {
     (async () => {
-      const favouriteMovies = await API.get('account/21588809/favorite/movies');
-      const watchlist = await API.get('account/21588809/watchlist/movies');
+      const favouriteMovies = await getFavoriteMovies(1);
+      const watchlist = await getWatchlistMovies(1);
 
       setFavouriteMovies(getMoviesId(favouriteMovies));
       setWatchlist(getMoviesId(watchlist));
