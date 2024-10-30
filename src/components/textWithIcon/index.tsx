@@ -1,2 +1,2 @@
-import TextWithIcon from '@components/textWithIcon/TextWithIcon';
+import TextWithIcon from './TextWithIcon';
 export default TextWithIcon;

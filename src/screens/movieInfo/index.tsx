@@ -1,2 +1,2 @@
-import MovieInfo from '@screens/movieInfo/MovieInfo';
+import MovieInfo from './MovieInfo';
 export default MovieInfo;

@@ -19,7 +19,7 @@ declare global {
     setValue: (value: string) => void;
     errorMsg?: string;
     label?: string;
-    icon?: Icon;
+    icon?: Icon | ReactNode;
   }
 
   interface ButtonComponentProps extends TouchableOpacityProps {
@@ -58,8 +58,36 @@ declare global {
   interface TextWithIconProps {
     icon: Icon;
     text: string;
-    textStyle?: StyleProp<Text>;
-    containerStyle?: StyleProp<View>;
+    textStyle?: StyleProp<TextStyle>;
+    containerStyle?: StyleProp<ViewStyle>;
     children?: ReactNode[];
+  }
+
+  interface MovieCardProps {
+    movie: FormattedMovieData;
+    onPress: () => void;
+    containerStyle?: StyleProp<ViewStyle>;
+    headingStyle?: StyleProp<TextStyle>;
+    imageStyle?: StyleProp<ImageStyle>;
+  }
+
+  interface BottomTabProps {
+    isFocused: boolean;
+    title: string;
+    icon?: (props: {
+      focused: boolean;
+      color: string;
+      size: number;
+    }) => React.ReactNode;
+    onPress: () => void;
+  }
+
+  interface ImageCarouselProps {
+    images: string[];
+  }
+
+  interface CustomLoaderProps {
+    size?: 'large' | 'small';
+    color?: string;
   }
 }

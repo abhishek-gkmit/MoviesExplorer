@@ -2,7 +2,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '@constants/colors';
-import styles from '@components/textWithIcon/style';
+
+import styles from './style';
 
 function TextWithIcon({
   icon,
