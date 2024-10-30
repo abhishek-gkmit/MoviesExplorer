@@ -16,7 +16,6 @@ function MyDrawerNavigator() {
           options={{ headerTitle: 'Movies' }}
         />
       </FavouritesContextProvider>
-      {/*<Drawer.Screen name="Profile" component={Profile} />*/}
     </Drawer.Navigator>
   );
 }
