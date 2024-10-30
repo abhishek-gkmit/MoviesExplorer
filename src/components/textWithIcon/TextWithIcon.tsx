@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import colors from '@constants/colors';
@@ -12,13 +12,15 @@ function TextWithIcon({
   textStyle,
 }: TextWithIconProps) {
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={StyleSheet.compose(styles.container, containerStyle)}>
       <MaterialCommunityIcons
         name={icon.name}
         size={icon.size || 14}
-        color={icon.color ? icon.color : colors.primary}
+        color={icon.color || colors.primary}
       />
-      <Text style={[styles.textStyle, textStyle]}>{text}</Text>
+      <Text style={StyleSheet.compose(styles.textStyle, textStyle)}>
+        {text}
+      </Text>
     </View>
   );
 }

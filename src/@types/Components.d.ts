@@ -1,10 +1,11 @@
-import { ReactNode } from 'react';
+import { ReactNode, RefObject } from 'react';
 import type {
   StyleProp,
   TextInputProps,
   TextStyle,
   TouchableOpacityProps,
   ViewStyle,
+  View,
 } from 'react-native/types';
 
 declare global {
