@@ -105,7 +105,7 @@ function MovieInfo() {
     );
 
     return isFavourite;
-  }, [favouriteMovies]);
+  }, [favouriteMovies, movieInfo.id]);
 
   const inWatchlist = useMemo(() => {
     const inWatchlist = watchlist.some(
@@ -113,7 +113,7 @@ function MovieInfo() {
     );
 
     return inWatchlist;
-  }, [watchlist]);
+  }, [watchlist, movieInfo.id]);
 
   // api handles
   const loadSimilarMovies = useCallback(
@@ -165,14 +165,14 @@ function MovieInfo() {
       isFavourite
         ? removeFromFavouritesWrapper(movieInfo.id + '')
         : addToFavouritesWrapper(movieInfo.id + '');
-  }, [isFavourite]);
+  }, [isFavourite, movieInfo.id]);
 
   const _onWatchlistBtnPress = useMemo(() => {
     return () =>
       inWatchlist
         ? removeFromWatchlistWrapper(movieInfo.id + '')
         : addToWatchlistWrapper(movieInfo.id + '');
-  }, [inWatchlist]);
+  }, [inWatchlist, movieInfo.id]);
 
   const _listRenderItem = useCallback(
     ({ item }) => (
@@ -211,7 +211,7 @@ function MovieInfo() {
   }, []);
 
   if (loading) {
-    return <Loader animating={true} />;
+    return <Loader />;
   }
 
   return (

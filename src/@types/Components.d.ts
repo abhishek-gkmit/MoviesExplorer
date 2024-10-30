@@ -86,7 +86,6 @@ declare global {
   }
 
   interface CustomLoaderProps {
-    animating: boolean;
     size?: 'large' | 'small';
     color?: string;
   }

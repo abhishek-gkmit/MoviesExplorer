@@ -4,13 +4,13 @@ import colors from '@constants/colors';
 
 import styles from './styles';
 
-function Loader({ animating, size, color }: CustomLoaderProps) {
+function Loader({ size, color }: CustomLoaderProps) {
   return (
     <View styles={styles.loaderContainer}>
       <ActivityIndicator
         size={size || 'large'}
         color={color || colors.primary}
-        animating={animating}
+        animating={true}
       />
     </View>
   );
