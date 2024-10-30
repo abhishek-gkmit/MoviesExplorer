@@ -22,7 +22,6 @@ const Input = forwardRef(function Input(
     cprops;
   const [isFocused, setIsFocused] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
-
   const [textChanged, setTextChanged] = useState(false);
 
   const setValueWrapper = useCallback(
@@ -36,6 +35,7 @@ const Input = forwardRef(function Input(
     [setValue],
   );
 
+  // memoized variables
   const iconToRender = useMemo(() => {
     return icon && React.isValidElement(icon) ? (
       icon
@@ -62,7 +62,7 @@ const Input = forwardRef(function Input(
         style={styles.textInput}
         value={value}
         onChangeText={setValueWrapper}
-        placeholderTextColor="gray"
+        placeholderTextColor={colors.gray}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         hitSlop={{
@@ -108,6 +108,17 @@ const Input = forwardRef(function Input(
     return label ? <Text style={styles.inputLabel}>{label}</Text> : null;
   }, [label]);
 
+  const inputContainerStyle = useMemo(() => {
+    return isFocused
+      ? [styles.inputContainer, styles.inputContainerFocus]
+      : textChanged
+        ? styles.inputContainer
+        : !errorMsg || errorMsg === ''
+          ? styles.inputContainer
+          : [styles.inputContainer, styles.inputContainerError];
+  }, [isFocused, textChanged, errorMsg]);
+
+  // effects
   useEffect(() => {
     setTextChanged(false);
   }, [errorMsg]);
@@ -116,20 +127,9 @@ const Input = forwardRef(function Input(
     <View>
       {inputLabel}
 
-      <View
-        style={
-          isFocused
-            ? [styles.inputContainer, styles.inputContainerFocus]
-            : textChanged
-              ? styles.inputContainer
-              : !errorMsg || errorMsg === ''
-                ? styles.inputContainer
-                : [styles.inputContainer, styles.inputContainerError]
-        }>
+      <View style={inputContainerStyle}>
         {iconToRender}
-
         {textInput}
-
         {makePasswordVisibleButton}
       </View>
 

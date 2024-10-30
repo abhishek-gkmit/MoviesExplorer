@@ -1,5 +1,7 @@
-import colors from '@constants/colors';
 import { StyleSheet } from 'react-native';
+
+import fontSize from '@constants/fonts';
+import colors from '@constants/colors';
 
 const styles = StyleSheet.create({
   tabsContainer: {
@@ -30,30 +32,18 @@ const styles = StyleSheet.create({
     top: -5,
   },
 
-  tabContainerFocused: {
-    backgroundColor: '#0f0',
-  },
-
-  tabContainerUnFocused: {
-    backgroundColor: 'white',
-  },
-
   tabTitle: {
-    color: 'gray',
-    fontSize: 12,
+    color: colors.gray,
+    fontSize: fontSize.twelve,
   },
 
   tabTitleFocused: {
     position: 'absolute',
     top: 35,
     color: colors.primary,
-    fontSize: 14,
+    fontSize: fontSize.fourteen,
     fontWeight: '500',
     marginTop: 2,
-  },
-
-  tabTitleUnFocused: {
-    color: 'gray',
   },
 });
 

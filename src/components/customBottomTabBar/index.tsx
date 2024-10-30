@@ -1,2 +1,2 @@
-import BottomTabBar from '@components/customBottomTabBar/BottomTabBar';
+import BottomTabBar from './BottomTabBar';
 export default BottomTabBar;

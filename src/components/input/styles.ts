@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import colors from '@constants/colors';
+import fontSize from '@constants/fonts';
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
 
   textInput: {
     color: colors.black,
-    fontSize: 14,
+    fontSize: fontSize.fourteen,
     padding: 0,
     flexGrow: 1,
     flexShrink: 1,
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginVertical: 5,
     textAlign: 'left',
-    fontSize: 12,
+    fontSize: fontSize.twelve,
   },
 });
 
