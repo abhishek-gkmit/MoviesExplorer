@@ -3,15 +3,11 @@ import React, { useState, createContext, useEffect } from 'react';
 import { getFavoriteMovies, getWatchlistMovies } from '@network/apiFunctions';
 import { getMoviesId } from '@utility/dataFormatters';
 
-const ThemeAndStorageContext = createContext<ThemeAndStorageContextValues>(
-  {} as ThemeAndStorageContextValues,
+const FavouritesContext = createContext<FavouritesContextValues>(
+  {} as FavouritesContextValues,
 );
 
-function ThemeAndStorageContextProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function FavouritesContextProvider({ children }: { children: React.ReactNode }) {
   const [favouriteMovies, setFavouriteMovies] = useState<Array<string>>([]);
   const [watchlist, setWatchlist] = useState<Array<string>>([]);
 
@@ -26,7 +22,7 @@ function ThemeAndStorageContextProvider({
   }, []);
 
   return (
-    <ThemeAndStorageContext.Provider
+    <FavouritesContext.Provider
       value={{
         favouriteMovies,
         setFavouriteMovies,
@@ -34,8 +30,8 @@ function ThemeAndStorageContextProvider({
         setWatchlist,
       }}>
       {children}
-    </ThemeAndStorageContext.Provider>
+    </FavouritesContext.Provider>
   );
 }
 
-export { ThemeAndStorageContextProvider, ThemeAndStorageContext };
+export { FavouritesContextProvider, FavouritesContext };
